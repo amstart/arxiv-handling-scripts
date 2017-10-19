@@ -1,12 +1,12 @@
-import sys, os, subprocess
-from tqdm import tqdm
+import sys, os
 import glob
 import gzip
 import tarfile, io
 from pathlib import Path
 import shutil
+from bs4 import UnicodeDammit
 
-file_list = glob.glob('*' + os.path.sep + '*.gz', recursive=True)
+file_list = glob.glob('*' + os.path.sep + '*.gz')
 
 for gzip_path in file_list:
     gzip_file = gzip.open(gzip_path).read()
@@ -22,12 +22,17 @@ for gzip_path in file_list:
         with open(newfilepath + "main.tex", 'wb+') as outfile:
             outfile.write(gzip_file)
     if not os.path.isfile(newfilepath + "main.tex"):
-        tex_list = glob.glob(newfilepath + '*.tex', recursive=True)
+        tex_list = glob.glob(newfilepath + '*.tex')
         for tex in tex_list:
-            print(tex)
-            if "begin{document}" in open(tex).read():
-                p = Path(tex)
-                p.rename(Path(p.parent, "main.tex"))
+            try:
+                if "begin{document}" in open(tex).read():
+                    p = Path(tex)
+                    p.rename(Path(p.parent, "main.tex"))
+            except:
+                if "begin{document}" in UnicodeDammit(open(tex, 'rb').read()):
+                    p = Path(tex)
+                    p.rename(Path(p.parent, "main.tex"))
+
 
 
 

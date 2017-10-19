@@ -9,8 +9,7 @@ file_list = glob.glob('*.tar')
 with open(sys.argv[1], 'r') as test_collection_file:
     test_collection = {}
     for line in test_collection_file:
-        test_collection[line[:-1]] = True
-
+        test_collection[line[:-2]] = True #this has to be changed to -1 on windows systems (carriage returns)
 
 def gz_files(members):
     for tarinfo in members:
